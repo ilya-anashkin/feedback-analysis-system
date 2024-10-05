@@ -1,3 +1,4 @@
+from fastapi import BackgroundTasks
 from fastapi import APIRouter, HTTPException
 from app.services.feedback_service import FeedbackService
 
@@ -13,11 +14,15 @@ async def info():
     }
 
 @router.post("/start")
-async def start():
+async def start(background_tasks: BackgroundTasks):
     if feedback_service.is_processing:
         raise HTTPException(status_code=400, detail="Processing is already running")
 
-    feedback_service.start_processing()
+    try:
+        await feedback_service.start_processing(background_tasks)
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=err)
+
     return {"message": "Processing started"}
 
 @router.post("/stop")
@@ -25,5 +30,5 @@ async def stop():
     if not feedback_service.is_processing:
         raise HTTPException(status_code=400, detail="Processing is not running")
 
-    feedback_service.stop_processing()
+    await feedback_service.stop_processing()
     return {"message": "Processing stopped"}
