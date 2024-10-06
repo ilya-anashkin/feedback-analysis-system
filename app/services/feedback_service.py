@@ -11,36 +11,34 @@ from app.logger import logger
 class FeedbackService:
     """
     FeedbackService class to manage feedback processing.
-
-    Attributes:
-        async_session (sessionmaker): Asynchronous session maker for database interactions.
-        sync_session (sessionmaker): Synchronous session maker for database interactions.
-        is_connected_to_db (bool): Indicates if the service is connected to the database.
-        is_processing (bool): Indicates if feedback processing is currently running.
-        config (dict): Configuration settings for source and destination tables and columns.
-        destination_table (Table): SQLAlchemy Table object for the destination table.
-        offset (int): Offset for pagination during feedback processing.
-        limit (int): Limit for the number of feedback records to process at a time.
     """
 
     def __init__(self):
         """Initializes FeedbackService and checks database connection."""
         self.async_session: sessionmaker = AsyncSessionLocal
+        """Asynchronous session maker for database interactions."""
         self.sync_session: sessionmaker = SyncSessionLocal
+        """Synchronous session maker for database interactions."""
         self.is_connected_to_db: bool = True
+        """Indicates if the service is connected to the database."""
         logger.info("FeedbackService successfully connected to database")
 
         self.is_processing: bool = False
+        """Indicates if feedback processing is currently running."""
         self.config: dict = {
             "source_table": settings.source_table,
             "source_column_name": settings.source_column_name,
             "destination_table": settings.destination_table,
             "destination_column_name": settings.destination_column_name,
         }
+        """Configuration settings for source and destination tables and columns."""
 
         self.destination_table: Table = None
+        """SQLAlchemy Table object for the destination table."""
         self.offset: int = 0
+        """Offset for pagination during feedback processing."""
         self.limit: int = 2
+        """Limit for the number of feedback records to process at a time."""
         logger.info(f"FeedbackService successfully created with config: {self.config}")
 
     async def start_processing(self, background_tasks: BackgroundTasks):
