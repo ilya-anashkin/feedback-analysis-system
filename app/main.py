@@ -20,7 +20,7 @@ async def main():
     return {
         "message": "Welcome to Feedback Analysis System (FAS)",
         "swagger": "Use /docs route for Swagger",
-        "code_docs": "Use /code/docs route for docs"
+        "code_docs": "Use /docs/index.html route for docs"
     }
 
 @app.get("/docs/index.html", response_class=HTMLResponse)
