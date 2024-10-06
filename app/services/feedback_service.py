@@ -9,7 +9,22 @@ from app.logger import logger
 
 
 class FeedbackService:
+    """
+    FeedbackService class to manage feedback processing.
+
+    Attributes:
+        async_session (sessionmaker): Asynchronous session maker for database interactions.
+        sync_session (sessionmaker): Synchronous session maker for database interactions.
+        is_connected_to_db (bool): Indicates if the service is connected to the database.
+        is_processing (bool): Indicates if feedback processing is currently running.
+        config (dict): Configuration settings for source and destination tables and columns.
+        destination_table (Table): SQLAlchemy Table object for the destination table.
+        offset (int): Offset for pagination during feedback processing.
+        limit (int): Limit for the number of feedback records to process at a time.
+    """
+
     def __init__(self):
+        """Initializes FeedbackService and checks database connection."""
         self.async_session: sessionmaker = AsyncSessionLocal
         self.sync_session: sessionmaker = SyncSessionLocal
         self.is_connected_to_db: bool = True
@@ -29,6 +44,17 @@ class FeedbackService:
         logger.info(f"FeedbackService successfully created with config: {self.config}")
 
     async def start_processing(self, background_tasks: BackgroundTasks):
+        """
+        Start processing feedback in the background.
+
+        This method creates the destination table and starts the feedback processing task.
+
+        Args:
+            background_tasks (BackgroundTasks): FastAPI utility to run tasks in the background.
+
+        Raises:
+            RuntimeError: If the destination table has not been created.
+        """
         await self.create_destination_table()
         if self.destination_table is None:
             raise RuntimeError("Destination table hasn't been created")
@@ -37,15 +63,30 @@ class FeedbackService:
         background_tasks.add_task(self.process)
 
     async def stop_processing(self):
+        """Stop the feedback processing."""
         self.is_processing = False
         # TODO: Stop background task processing
 
     async def process(self):
+        """
+        Continuously process feedback while processing is enabled.
+
+        This method runs in a loop, calling the process_feedback method every 5 seconds.
+        """
         while self.is_processing:
             await asyncio.sleep(5)
             await self.process_feedback()
 
     async def process_feedback(self):
+        """
+        Fetch and process feedback from the source table.
+
+        This method retrieves feedback records from the source table and
+        inserts them into the destination table. Logging is performed to
+        track the number of records processed.
+
+        If no feedbacks are found, an info log is generated.
+        """
         async with self.async_session() as session:
             query = select(text("id"), text(self.config['source_column_name'])).limit(self.limit).offset(self.offset).select_from(text(self.config['source_table']))
             result = await session.execute(query)
@@ -72,6 +113,12 @@ class FeedbackService:
                 logger.info("No feedbacks to process")
 
     async def create_destination_table(self):
+        """
+        Create the destination table in the database.
+
+        This method defines the schema for the destination table and
+        creates it in the database if it does not already exist.
+        """
         metadata = MetaData()
         self.destination_table = Table(
             self.config['destination_table'], metadata,

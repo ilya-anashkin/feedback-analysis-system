@@ -14,6 +14,13 @@ SOURCE_TABLE = os.getenv('SOURCE_TABLE')
 SOURCE_COLUMN_NAME = os.getenv('SOURCE_COLUMN_NAME')
 
 def create_connection():
+    """
+    Create a connection to the PostgreSQL database.
+
+    Returns:
+        conn: A psycopg2 connection object if the connection is successful,
+              or None if the connection fails.
+    """
     try:
         conn = psycopg2.connect(
             dbname=DB_NAME,
@@ -29,6 +36,15 @@ def create_connection():
         return None
 
 def setup_and_fill_database(conn):
+    """
+    Set up the database by creating a table and populating it with sample data.
+
+    Args:
+        conn: A psycopg2 connection object used to interact with the database.
+
+    This function creates a table defined by the SOURCE_TABLE variable
+    and populates it with predefined sample feedback data.
+    """
     with conn:
         with conn.cursor() as cursor:
             # Создаем таблицу
