@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+
 class Settings(BaseSettings):
     """
     The Settings class is used to load and validate the application configuration
@@ -21,6 +22,7 @@ class Settings(BaseSettings):
             Contains configuration options for the Settings class.
             Specifies the `env/.env` file for loading environment variables.
     """
+
     db_host: str
     db_port: str
     db_name: str
@@ -38,6 +40,8 @@ class Settings(BaseSettings):
         Attributes:
             env_file (str): Path to the `.env` file that contains environment variables.
         """
+
         env_file = "env/.env"
+
 
 settings = Settings()
