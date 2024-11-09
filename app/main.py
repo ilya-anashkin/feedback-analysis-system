@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+
 from app.routes.feedback_routes import router as feedback_router
 
 app = FastAPI()
@@ -8,6 +9,7 @@ app = FastAPI()
 app.include_router(feedback_router, prefix="/api/feedback")
 
 app.mount("/docs", StaticFiles(directory="app/docs"), name="docs")
+
 
 @app.get("/")
 async def main():
@@ -20,8 +22,9 @@ async def main():
     return {
         "message": "Welcome to Feedback Analysis System (FAS)",
         "swagger": "Use /docs route for Swagger",
-        "code_docs": "Use /docs/index.html route for docs"
+        "code_docs": "Use /docs/index.html route for docs",
     }
+
 
 @app.get("/docs/index.html", response_class=HTMLResponse)
 async def read_index():

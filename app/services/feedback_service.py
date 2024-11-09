@@ -1,11 +1,14 @@
-from fastapi import BackgroundTasks
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select, text
-from sqlalchemy import MetaData, Table, Column, Integer, String
-from app.config import settings
-from app.database.connection import AsyncSessionLocal, SyncSessionLocal, sync_engine
 import asyncio
+
+from fastapi import BackgroundTasks
+from sqlalchemy import Column, Integer, MetaData, String, Table, select, text
+from sqlalchemy.orm import sessionmaker
+
+from app.config import settings
+from app.database.connection import (AsyncSessionLocal, SyncSessionLocal,
+                                     sync_engine)
 from app.logger import logger
+from app.services.analyzer_service import Analyzer
 
 
 class FeedbackService:
@@ -22,6 +25,9 @@ class FeedbackService:
         self.is_connected_to_db: bool = True
         """Indicates if the service is connected to the database."""
         logger.info("FeedbackService successfully connected to database")
+
+        self.analyzer: Analyzer = Analyzer()
+        logger.info("AnalyzerService successfully loaded")
 
         self.is_processing: bool = False
         """Indicates if feedback processing is currently running."""
@@ -86,7 +92,12 @@ class FeedbackService:
         If no feedbacks are found, an info log is generated.
         """
         async with self.async_session() as session:
-            query = select(text("id"), text(self.config['source_column_name'])).limit(self.limit).offset(self.offset).select_from(text(self.config['source_table']))
+            query = (
+                select(text("id"), text(self.config["source_column_name"]))
+                .limit(self.limit)
+                .offset(self.offset)
+                .select_from(text(self.config["source_table"]))
+            )
             result = await session.execute(query)
             feedbacks = result.fetchall()
 
@@ -94,12 +105,16 @@ class FeedbackService:
                 logger.info(f"Select {len(feedbacks)} feedbacks. Send to process")
                 for feedback in feedbacks:
                     feedback_id, feedback_text = feedback
-                    logger.debug(f"Processing feedback ID: {feedback_id}, Text: {feedback_text}")
+                    logger.debug(
+                        f"Processing feedback ID: {feedback_id}, Text: {feedback_text}"
+                    )
 
-                    # TODO: add to created dest table
+                    tonality = self.analyzer.predict(feedback_text)
+
                     insert_stmt = self.destination_table.insert().values(
                         source_id=feedback_id,
-                        **{self.config['destination_column_name']: feedback_text}
+                        **{self.config["destination_column_name"]: feedback_text},
+                        tonality=tonality,
                     )
 
                     await session.execute(insert_stmt)
@@ -119,10 +134,12 @@ class FeedbackService:
         """
         metadata = MetaData()
         self.destination_table = Table(
-            self.config['destination_table'], metadata,
-            Column('id', Integer, primary_key=True),
-            Column('source_id', Integer),
-            Column(self.config['destination_column_name'], String)
+            self.config["destination_table"],
+            metadata,
+            Column("id", Integer, primary_key=True),
+            Column("source_id", Integer),
+            Column(self.config["destination_column_name"], String),
+            Column("tonality", String),
         )
         async with self.async_session() as session:
             async with session.begin():

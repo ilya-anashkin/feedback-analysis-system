@@ -1,0 +1,10 @@
+[run]
+source=app
+omit=
+    tests/*
+    app/logger.py
+    app/config.py
+
+[report]
+show_missing=True
+skip_empty=True
