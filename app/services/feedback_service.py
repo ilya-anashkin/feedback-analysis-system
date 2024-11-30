@@ -99,7 +99,7 @@ class FeedbackService:
                 .select_from(text(self.config["source_table"]))
             )
             result = await session.execute(query)
-            feedbacks = result.fetchall()
+            feedbacks = await result.fetchall()  # Добавлено await
 
             if feedbacks:
                 logger.info(f"Select {len(feedbacks)} feedbacks. Send to process")

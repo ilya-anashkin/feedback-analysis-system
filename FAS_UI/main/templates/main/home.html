@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Analysis System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            margin: 20px;
+        }
+        #logs {
+            height: 300px;
+            overflow-y: scroll;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="text-center mb-4">
+            <h1>Feedback Analysis System</h1>
+        </header>
+
+        <!-- Buttons -->
+        <div class="text-center mb-3">
+            <button id="startBtn" class="btn btn-success">Start</button>
+            <button id="stopBtn" class="btn btn-danger">Stop</button>
+        </div>
+
+        <!-- Logs -->
+        <h3>Logs</h3>
+        <div id="logs"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Анашкин Илья, Мусина Александра, Зиёев Рустам, МКС244 2024 год
+    </footer>
+
+<script>
+    // URL-ы теперь используют эндпоинты Django
+    const baseUrl = ""; // Пусть запросы идут на текущий сервер
+
+    // Функция для добавления текста в Logs
+    function addLog(message, isError = false) {
+        const logsDiv = document.getElementById("logs");
+        const logEntry = document.createElement("div");
+        logEntry.textContent = message;
+        logEntry.style.color = isError ? "red" : "black"; // Красный цвет для ошибок
+        logsDiv.appendChild(logEntry);
+        logsDiv.scrollTop = logsDiv.scrollHeight; // Прокрутка вниз
+    }
+
+    // Кнопка Start
+    document.getElementById("startBtn").addEventListener("click", () => {
+        axios.get('/start/')
+            .then(response => {
+                addLog(response.data.message);
+            })
+            .catch(error => {
+                addLog(`Error: ${error.response.data.error || error.message}`, true);
+            });
+    });
+
+    // Кнопка Info
+    document.getElementById("infoBtn").addEventListener("click", () => {
+        axios.get('/info/')
+            .then(response => {
+                addLog(`Info: ${response.data.message}`);
+            })
+            .catch(error => {
+                addLog(`Error: ${error.response.data.error || error.message}`, true);
+            });
+    });
+
+    // Кнопка Stop
+    document.getElementById("stopBtn").addEventListener("click", () => {
+        axios.get('/stop/')
+            .then(response => {
+                addLog(response.data.message);
+            })
+            .catch(error => {
+                addLog(`Error: ${error.response.data.error || error.message}`, true);
+            });
+    });
+</script>
+
+</body>
+</html>
