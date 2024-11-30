@@ -5,8 +5,7 @@ from sqlalchemy import Column, Integer, MetaData, String, Table, select, text
 from sqlalchemy.orm import sessionmaker
 
 from app.config import settings
-from app.database.connection import (AsyncSessionLocal, SyncSessionLocal,
-                                     sync_engine)
+from app.database.connection import AsyncSessionLocal, SyncSessionLocal
 from app.logger import logger
 from app.services.analyzer_service import Analyzer
 
@@ -69,7 +68,6 @@ class FeedbackService:
     async def stop_processing(self):
         """Stop the feedback processing."""
         self.is_processing = False
-        # TODO: Stop background task processing
 
     async def process(self):
         """
