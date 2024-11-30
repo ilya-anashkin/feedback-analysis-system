@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Processing</title>
+    <style>
+        /* Основные стили */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        /* Стили кнопок */
+        button {
+            padding: 12px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.90); /* Эффект нажатия (уменьшение размера) */
+        }
+
+        .start {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .start:hover {
+            background-color: #45a049;
+        }
+
+        .stop {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .stop:hover {
+            background-color: #e53935;
+        }
+
+        .refresh {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .refresh:hover {
+            background-color: #1976D2;
+        }
+
+        /* Стиль для информации */
+        .info-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .info-box h2 {
+            margin: 0 0 10px;
+            color: #333;
+        }
+
+        .info-item {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .info-item span {
+            font-weight: bold;
+        }
+
+        .info-item.connected {
+            color: green;
+        }
+
+        .info-item.processing {
+            color: blue; 
+        }
+
+        .config-list {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .config-list li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Feedback Processing Control</h1>
+
+        <!-- Кнопки управления -->
+        <button class="start" onclick="startProcessing()">Start</button>
+        <button class="stop" onclick="stopProcessing()">Stop</button>
+        <button class="refresh" onclick="refreshInfo()">Refresh Info</button>
+
+        <!-- Статусная информация -->
+        <div class="info-box" id="info-box">
+            <h2>Status Information:</h2>
+            <div id="info-text">Click "Refresh Info" to load the data.</div>
+        </div>
+    </div>
+
+    <script>
+        // Функция для старта обработки
+        async function startProcessing() {
+            const response = await fetch('/api/feedback/start', { method: 'POST' });
+            const result = await response.json();
+            refreshInfo();
+        }
+
+        // Функция для остановки обработки
+        async function stopProcessing() {
+            const response = await fetch('/api/feedback/stop', { method: 'POST' });
+            const result = await response.json();
+            refreshInfo();
+        }
+
+        // Функция для обновления информации
+        async function refreshInfo() {
+            const response = await fetch('/api/feedback/info');
+            const data = await response.json();
+
+            // Определяем цвета для статуса подключения и обработки
+            const connectedClass = data.connected_to_db ? 'connected' : 'connected no';
+            const processingClass = data.processing ? 'processing' : 'processing no';
+
+            // Формируем HTML для конфигурации
+            const configList = `
+                <ul class="config-list">
+                    <li><strong>Source Table:</strong> ${data.config.source_table}</li>
+                    <li><strong>Source Column Name:</strong> ${data.config.source_column_name}</li>
+                    <li><strong>Destination Table:</strong> ${data.config.destination_table}</li>
+                    <li><strong>Destination Column Name:</strong> ${data.config.destination_column_name}</li>
+                </ul>
+            `;
+
+            // Формируем HTML для статуса
+            const infoHtml = `
+                <div class="info-item ${connectedClass}"><span>Connected to DB:</span> ${data.connected_to_db ? 'Yes' : 'No'}</div>
+                <div class="info-item ${processingClass}"><span>Processing:</span> ${data.processing ? 'Active' : 'Inactive'}</div>
+                <div class="info-item"><span>Config:</span></div>
+                ${configList}
+            `;
+
+            document.getElementById('info-text').innerHTML = infoHtml;
+        }
+    </script>
+</body>
+</html>
