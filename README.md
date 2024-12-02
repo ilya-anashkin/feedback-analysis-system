@@ -101,7 +101,7 @@ Contributions are welcome! Please follow these steps:
 If you have any questions or suggestions, feel free to reach out:
 
 - Authors: Ilya Anashkin, Ziyoev Rustam, Musina Alexandra
-- GitHub: [ilya-anashkin](https://github.com/ilya-anashkin), [rustamhse](https://github.com/rustamhse), [admusina](https://github.com/admusina)
+- GitHub: [ilya-anashkin](https://github.com/ilya-anashkin), [rustamhse](https://github.com/rustamhse), [SashaMusina22](https://github.com/SashaMusina22)
 
 ---
 
