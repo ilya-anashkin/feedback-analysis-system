@@ -16,6 +16,8 @@ Feedback Analysis System is a machine learning-powered application designed to a
 
 ---
 
+## 📂 Project Structure
+
 ```
 feedback-analysis-system/
 ├── data/                 # Datasets used for training and testing
@@ -82,7 +84,7 @@ The sentiment analysis model uses transformer-based architectures such as **BERT
 
 ## 📊 Example Output
 
-![Grafana Dashboard](https://via.placeholder.com/600x300.png?text=Sample+Grafana+Dashboard)
+![Grafana Dashboard](photo_2024-12-02_15-38-41.jpg)
 
 ---
 
@@ -104,4 +106,3 @@ If you have any questions or suggestions, feel free to reach out:
 ---
 
 Happy analyzing! 🎉
-```
