@@ -48,9 +48,10 @@ feedback-analysis-system/
    pip install -r requirements.txt
    ```
 
-3. **Run the application**:
+3. **Initialize docker container and run backend**:
    ```bash
-   python src/main.py
+   docker compose up -d
+   ./run.sh backend
    ```
 
 4. **Set up Grafana dashboards**:
