@@ -2,7 +2,6 @@
 
 ![Feedback Analysis](https://img.shields.io/badge/-Sentiment%20Analysis-blue?style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
-![License](https://img.shields.io/github/license/ilya-anashkin/feedback-analysis-system)
 
 Feedback Analysis System is a machine learning-powered application designed to analyze textual feedback and determine its sentiment. The system enables businesses to extract actionable insights from customer reviews, providing a deeper understanding of customer sentiments through visual analytics.
 
@@ -17,10 +16,8 @@ Feedback Analysis System is a machine learning-powered application designed to a
 
 ---
 
-## 📂 Project Structure
-
+```
 feedback-analysis-system/
-│
 ├── data/                 # Datasets used for training and testing
 ├── models/               # Pretrained and fine-tuned models
 ├── notebooks/            # Jupyter Notebooks for experiments
@@ -31,6 +28,7 @@ feedback-analysis-system/
 ├── tests/                # Unit and integration tests
 ├── requirements.txt      # Dependencies for the project
 └── README.md             # Project documentation
+```
 
 
 ---
@@ -95,14 +93,6 @@ Contributions are welcome! Please follow these steps:
 1. Fork the repository.
 2. Create a new branch for your feature or bug fix.
 3. Submit a pull request with a detailed description of your changes.
-
----
-
-## 📜 License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
 
 ## 📧 Contact
 
